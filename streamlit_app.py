@@ -57,19 +57,20 @@ def main():
 
     st.title("Domains transfer")
 
-    hors_zebra_model = load_model_horse_zebra()
+    # hors_zebra_model = load_model_horse_zebra()
     kitchen_model = load_model_kitchens()
 
     direction = st.selectbox(
         "Direction",
-        [P2M, M2P, H2Z, Z2H]
+        [P2M, M2P]
     )
 
     a2b = True
     if direction == Z2H or direction == M2P:
         a2b = False
 
-    cg_model = hors_zebra_model if direction == H2Z or direction == Z2H else kitchen_model
+    # cg_model = hors_zebra_model if direction == H2Z or direction == Z2H else kitchen_model
+    cg_model = kitchen_model
 
     uploaded_file = st.file_uploader("Upload image", type=["png", "jpg", "jpeg"])
 

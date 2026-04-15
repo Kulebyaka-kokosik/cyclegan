@@ -4,11 +4,11 @@ from cyclegan import utils, model
 import streamlit as st
 
 HORSE_VS_ZEBRA_MODEL_PATH = "./weights/horse_vs_zebra.pt"
-PROVENCE_VS_MINIMAL_PATH = "./weights/horse_vs_zebra.pt"
+PROVENCE_VS_MINIMAL_PATH = "./weights/kitchens.pt"
 H2Z = "Horse → Zebra"
 Z2H = "Zebra → Horse"
-P2M = "Provence → Minimalism"
-M2P = "Minimalism → Provence"
+P2M = "Kitchen style: Provence → Kitchen style: Minimalism"
+M2P = "Kitchen style: Minimalism → Kitchen style: Provence"
 
 
 
@@ -62,7 +62,7 @@ def main():
 
     direction = st.selectbox(
         "Direction",
-        [H2Z, Z2H, P2M, M2P]
+        [P2M, M2P, H2Z, Z2H]
     )
 
     a2b = True

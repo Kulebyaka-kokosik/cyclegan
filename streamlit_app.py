@@ -3,20 +3,10 @@ import numpy as np
 from cyclegan import utils, model
 import streamlit as st
 
-HORSE_VS_ZEBRA_MODEL_PATH = "./weights/horse_vs_zebra.pt"
 PROVENCE_VS_MINIMAL_PATH = "./weights/kitchens.pt"
-H2Z = "Horse → Zebra"
-Z2H = "Zebra → Horse"
 P2M = "Kitchen style: Provence → Kitchen style: Minimalism"
 M2P = "Kitchen style: Minimalism → Kitchen style: Provence"
 
-
-
-@st.cache_resource
-def load_model_horse_zebra():
-    cg_model = utils.load_model(HORSE_VS_ZEBRA_MODEL_PATH)
-    cg_model.eval()
-    return cg_model
 
 @st.cache_resource
 def load_model_kitchens():
@@ -57,7 +47,6 @@ def main():
 
     st.title("Domains transfer")
 
-    # hors_zebra_model = load_model_horse_zebra()
     kitchen_model = load_model_kitchens()
 
     direction = st.selectbox(
@@ -66,16 +55,34 @@ def main():
     )
 
     a2b = True
-    if direction == Z2H or direction == M2P:
+    example_image_path = "./assets/provence.jpg"
+    if direction == M2P:
         a2b = False
+        example_image_path = "./assets/minimalism.jpg"
 
-    # cg_model = hors_zebra_model if direction == H2Z or direction == Z2H else kitchen_model
+    if st.session_state.get("direction") != direction:
+        st.session_state["direction"] = direction
+        st.session_state["use_example"] = False
+
     cg_model = kitchen_model
+
+    st.image(example_image_path, caption="Example image", width=200)
+    use_example = st.button("Use the example")
+
+    if use_example:
+        st.session_state["use_example"] = True
 
     uploaded_file = st.file_uploader("Upload image", type=["png", "jpg", "jpeg"])
 
-    if uploaded_file:
-        image = Image.open(uploaded_file).convert("RGB")
+    if uploaded_file and not use_example:
+        st.session_state["use_example"] = False
+
+    if uploaded_file or st.session_state.get("use_example"):
+        if st.session_state.get("use_example"):
+            image = Image.open(example_image_path).convert("RGB")
+        else:
+            image = Image.open(uploaded_file).convert("RGB")
+
         image = resize_max_side(image)
 
         output_image = inference(cg_model, image, a2b=a2b)
